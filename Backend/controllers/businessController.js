@@ -1,5 +1,9 @@
-export const getBusinessRequirements = (req, res) => {
-  const { size, seating, gas } = req.body;
+// businessController.js
+import { deliveryRequirements } from "./deliveryRequirements.js";
+import { generateBusinessFeedback } from "./LLMService.js";
+
+export const getBusinessRequirements = async (req, res) => {
+  const { size, seating, gas, delivery } = req.body;
 
   let requirements = ["רישיון עסק כללי"];
 
@@ -15,7 +19,20 @@ export const getBusinessRequirements = (req, res) => {
     requirements.push("אישור שימוש בגז");
   }
 
+  if (delivery) {
+    requirements.push(...deliveryRequirements);
+  }
+
+  // הפעלת המודל לשפה ליצירת דוח מותאם
+  const feedback = await generateBusinessFeedback(requirements, {
+    size,
+    seating,
+    gas,
+    delivery,
+  });
+
   res.json({
     requirements,
+    feedback,
   });
 };
