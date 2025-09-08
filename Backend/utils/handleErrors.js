@@ -12,5 +12,4 @@ const handleBadRequest = async (validator, error) => {
   return Promise.reject(error);
 };
 
-exports.handleError = handleError;
-exports.handleBadRequest = handleBadRequest;
+export { handleError, handleBadRequest };

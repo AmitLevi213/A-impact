@@ -6,4 +6,4 @@ const LOGGER = "morgan";
 
 if (LOGGER === "morgan") app.use(morganLogger);
 
-module.exports = app;
+export default app;

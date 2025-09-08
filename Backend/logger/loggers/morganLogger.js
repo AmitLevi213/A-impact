@@ -1,6 +1,6 @@
-const chalk = require("chalk");
-const morgan = require("morgan");
-const currentTime = require("../../utils/timeService");
+import chalk from "chalk"; // Use default import for chalk
+import morgan from "morgan";
+import currentTime from "../../utils/timeService.js";
 
 const morganLogger = morgan((tokens, req, res) => {
   const { year, month, day, hours, minutes, seconds } = currentTime();
@@ -31,4 +31,4 @@ const morganLogger = morgan((tokens, req, res) => {
   );
 });
 
-module.exports = morganLogger;
+export default morganLogger; // Use ES module export

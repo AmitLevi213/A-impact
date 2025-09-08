@@ -16,4 +16,4 @@ const currentTime = () => {
   return { year, month, day, hours, minutes, seconds };
 };
 
-module.exports = currentTime;
+export default currentTime;
