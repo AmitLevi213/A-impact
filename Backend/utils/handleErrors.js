@@ -1,15 +1,15 @@
-const chalk = require("chalk");
+import chalk from "chalk";
 
-const handleError = (res, status, message = "") => {
+export const handleError = (res, status, message = "") => {
   console.log(chalk.redBright(message));
   return res.status(status).send(message);
 };
 
-const handleBadRequest = async (validator, error) => {
+export const handleBadRequest = async (validator, error) => {
   const errorMessage = `${validator} Error: ${error.message}`;
   error.message = errorMessage;
   error.status = error.status || 400;
   return Promise.reject(error);
 };
 
-export { handleError, handleBadRequest };
+export default { handleError, handleBadRequest };

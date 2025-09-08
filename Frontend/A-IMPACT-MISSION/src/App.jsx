@@ -12,9 +12,10 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <h1>📋 Business Licensing Assessor</h1>
-      <p>Server says: {message}</p>
+    <div dir="rtl">
+      {" "}
+      <h1>📋 בודק רישוי עסקים</h1>
+      <p>השרת אומר: {message}</p>
     </div>
   );
 }
