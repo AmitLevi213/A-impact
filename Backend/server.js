@@ -2,8 +2,13 @@ import express from "express";
 import cors from "cors";
 import chalk from "chalk";
 import morganLogger from "./logger/loggers/morganLogger.js";
-import { handleError } from "./utils/handleErrors.js"; // Use named import
+import { handleError } from "./utils/handleErrors.js";
 import router from "./route/router.js";
+import connectDB from "./DB/dbConnection.js";
+import dotenv from "dotenv"; // Import dotenv
+
+dotenv.config(); // Load environment variables
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -18,6 +23,8 @@ app.use((err, req, res, next) => {
   handleError(res, 500, err.message);
 });
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () =>
-  console.log(chalk.blueBright(`Server running on port ${PORT}`))
+app.listen(
+  PORT,
+  () => console.log(chalk.blueBright(`Server running on port ${PORT}`)),
+  connectDB()
 );

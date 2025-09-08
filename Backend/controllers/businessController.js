@@ -1,8 +1,5 @@
-// For now, we just return dummy requirements
 export const getBusinessRequirements = (req, res) => {
-  const { size, seating, gas } = req.body; //
-
-//   console.log(`Received message: ${message}`); // Log the Hebrew message
+  const { size, seating, gas } = req.body;
 
   let requirements = ["רישיון עסק כללי"];
 
@@ -19,7 +16,6 @@ export const getBusinessRequirements = (req, res) => {
   }
 
   res.json({
-    // message: "דרישות רישוי מותאמות לעסק שלך",
     requirements,
   });
 };
