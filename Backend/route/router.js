@@ -4,7 +4,7 @@ import { handleError } from "../utils/handleErrors.js";
 
 const router = express.Router();
 
-router.use("/business", businessRoutes); // Mount businessRoutes at /business
+router.use("/business", businessRoutes);
 
 router.use((req, res) => {
   handleError(res, 404, "המשאב לא נמצא");
