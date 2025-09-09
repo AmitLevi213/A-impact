@@ -3,34 +3,34 @@ import chalk from "chalk";
 
 const connectDB = async () => {
   try {
-    console.log(chalk.yellow.bold("🔄 מתחבר למסד הנתונים..."));
+    console.log(chalk.yellow.bold("🔄 Connecting to database..."));
 
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
-    console.log(chalk.green.bold(`✅ חיבור למסד הנתונים הצליח!`));
-    console.log(chalk.cyan(`🏠 מארח: ${conn.connection.host}`));
-    console.log(chalk.magenta(`📦 מסד נתונים: ${conn.connection.name}`));
+    console.log(chalk.green.bold(`✅ Database connection successful!`));
+    console.log(chalk.cyan(`🏠 Host: ${conn.connection.host}`));
+    console.log(chalk.magenta(`📦 Database: ${conn.connection.name}`));
     console.log(chalk.blue("━".repeat(50)));
 
     // Event listeners for connection
     mongoose.connection.on("error", (err) => {
-      console.log(chalk.red.bold("❌ שגיאה במסד הנתונים:"), err);
+      console.log(chalk.red.bold("❌ Database error:"), err);
     });
 
     mongoose.connection.on("disconnected", () => {
-      console.log(chalk.yellow.bold("⚠️  נותק ממסד הנתונים"));
+      console.log(chalk.yellow.bold("⚠️  Disconnected from database"));
     });
 
     mongoose.connection.on("reconnected", () => {
-      console.log(chalk.green.bold("🔄 התחבר מחדש למסד הנתונים"));
+      console.log(chalk.green.bold("🔄 Reconnected to database"));
     });
 
     return conn;
   } catch (error) {
-    console.log(chalk.red.bold("❌ כשל בחיבור למסד הנתונים:"));
+    console.log(chalk.red.bold("❌ Database connection failed:"));
     console.log(chalk.red(error.message));
     process.exit(1);
   }
