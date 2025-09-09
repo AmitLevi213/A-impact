@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   transition: background 0.3s, color 0.3s;
 }
 
@@ -9,12 +9,13 @@ body {
   margin: 2em auto;
   padding: 2em;
   border-radius: 1.5em;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border: 3px solid var(--border-color);
 }
 
-h1, h2 {
+h1,
+h2 {
   font-weight: 700;
   margin-bottom: 0.5em;
 }
@@ -51,7 +52,7 @@ button[type="submit"] {
   color: #fff;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-top: 1em;
   transition: background 0.2s;
 }
@@ -69,7 +70,8 @@ button[type="submit"] {
     padding: 1em;
     border-radius: 0.7em;
   }
-  h1, h2 {
+  h1,
+  h2 {
     font-size: 1.2em;
   }
   label {

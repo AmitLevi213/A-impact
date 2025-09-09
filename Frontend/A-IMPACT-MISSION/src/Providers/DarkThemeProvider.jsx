@@ -1,23 +1,23 @@
 /* eslint-disable react-refresh/only-export-components */
-import  { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const ThemeContext = createContext();
 
 const themes = {
   light: {
-    background: "#f5f6fa",
-    color: "#222",
-    accent: "#0078d7",
-    card: "#fff",
-    border: "#e0e0e0"
+    background: "#F5EFE7",
+    color: "#213555",
+    accent: "#3E5879",
+    card: "#FFFFFF",
+    border: "#D8C4B6",
   },
   dark: {
-    background: "#181a20",
-    color: "#f5f6fa",
-    accent: "#00bcd4",
-    card: "#23272f",
-    border: "#333"
-  }
+    background: "#213555",
+    color: "#F5EFE7",
+    accent: "#D8C4B6",
+    card: "#3E5879",
+    border: "#D8C4B6",
+  },
 };
 
 export default function DarkThemeProvider({ children }) {
@@ -29,10 +29,23 @@ export default function DarkThemeProvider({ children }) {
     localStorage.setItem("theme", theme);
     document.body.style.background = themes[theme].background;
     document.body.style.color = themes[theme].color;
+
+    // inject CSS variables for global use
+    document.documentElement.style.setProperty(
+      "--accent-color",
+      themes[theme].accent
+    );
+    document.documentElement.style.setProperty("--card-bg", themes[theme].card);
+    document.documentElement.style.setProperty(
+      "--border-color",
+      themes[theme].border
+    );
   }, [theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, themeStyles: themes[theme] }}>
+    <ThemeContext.Provider
+      value={{ theme, setTheme, themeStyles: themes[theme] }}
+    >
       {children}
     </ThemeContext.Provider>
   );
