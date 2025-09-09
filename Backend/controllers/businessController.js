@@ -11,6 +11,7 @@ import BusinessReport from "../DB/models/businessSchema.js";
 
 export const getBusinessRequirements = async (req, res) => {
   try {
+    console.log("[getBusinessRequirements] Incoming request body:", req.body);
     const { size, seating, gas, delivery } = req.body;
 
     // התחלת דרישות בסיסיות
