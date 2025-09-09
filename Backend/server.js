@@ -5,9 +5,9 @@ import morganLogger from "./logger/loggers/morganLogger.js";
 import { handleError } from "./utils/handleErrors.js";
 import router from "./route/router.js";
 import connectDB from "./DB/dbConnection.js";
-import dotenv from "dotenv"; 
+import dotenv from "dotenv";
 
-dotenv.config(); 
+dotenv.config();
 
 const app = express();
 app.use(cors());
