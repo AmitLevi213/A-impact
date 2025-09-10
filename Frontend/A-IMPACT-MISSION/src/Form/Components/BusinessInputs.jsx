@@ -26,10 +26,12 @@ export default function BusinessInputs({
       <label>
         גודל העסק (מ"ר):
         <input
-          type="text"
+          type="number"
           value={size}
           onChange={(e) => setSize(e.target.value)}
           required
+          min="1"
+          step="0.1"
           style={inputStyle}
         />
       </label>
@@ -37,10 +39,12 @@ export default function BusinessInputs({
       <label>
         מספר מקומות ישיבה/תפוסה:
         <input
-          type="text"
+          type="number"
           value={seating}
           onChange={(e) => setSeating(e.target.value)}
           required
+          min="1"
+          step="1"
           style={inputStyle}
         />
       </label>
