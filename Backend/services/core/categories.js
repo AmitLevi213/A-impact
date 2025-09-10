@@ -40,6 +40,7 @@ export const categories = {
       "הובלת עופות",
       "תעודת משלוח",
     ],
+    businessMatch: (params) => params.delivery === true,
     regulations: [],
   },
   seating: {
@@ -84,6 +85,14 @@ export const categories = {
       "תפוסת אולם",
       "מיועד ל-50 איש לכל היותר",
       "אולמות שמחה",
+    ],
+    businessMatch: (params) => params.seating > 0,
+    sizeThresholds: [
+      { min: 0, max: 10, keywords: ["עד 10", "עד עשרה", "קטן", "עד 10 איש"] },
+      { min: 11, max: 30, keywords: ["11-30", "עשרה עד שלושים", "בינוני", "עד 30 איש"] },
+      { min: 31, max: 50, keywords: ["31-50", "שלושים עד חמישים", "גדול", "עד 50 איש"] },
+      { min: 51, max: 100, keywords: ["51-100", "חמישים עד מאה", "גדול מאוד", "עד 100 איש"] },
+      { min: 101, max: Infinity, keywords: ["מעל 100", "מעל מאה", "ענק", "מעל 100 איש"] }
     ],
     regulations: [],
   },
@@ -152,6 +161,14 @@ export const categories = {
       "סנטימטר",
       "סנטימטרים",
     ],
+    businessMatch: (params) => params.size > 0,
+    sizeThresholds: [
+      { min: 0, max: 50, keywords: ["עד 50", "עד חמישים", "קטן", "עד 50 מ\"ר"] },
+      { min: 51, max: 100, keywords: ["51-100", "חמישים עד מאה", "בינוני", "עד 100 מ\"ר"] },
+      { min: 101, max: 200, keywords: ["101-200", "מאה עד מאתיים", "גדול", "עד 200 מ\"ר"] },
+      { min: 201, max: 500, keywords: ["201-500", "מאתיים עד חמש מאות", "גדול מאוד", "עד 500 מ\"ר"] },
+      { min: 501, max: Infinity, keywords: ["מעל 500", "מעל חמש מאות", "ענק", "מעל 500 מ\"ר"] }
+    ],
     regulations: [],
   },
   fireAndGas: {
@@ -175,6 +192,7 @@ export const categories = {
       "גלגלון כיבוי",
       "מערכת מנדפים",
     ],
+    businessMatch: (params) => params.gas === true,
     regulations: [],
   },
 };
