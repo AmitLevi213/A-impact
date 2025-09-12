@@ -55,16 +55,8 @@ function isValidRegulatorySection(text) {
     return false;
   }
   
-  // Must contain regulatory keywords
-  const regulatoryKeywords = [
-    'חובה', 'נדרש', 'יש ל', 'צריך', 'חייב', 'אסור', 'לא יעשה',
-    'מינימום', 'מקסימום', 'לפחות', 'לא יותר', 'לא פחות',
-    'יותקן', 'יוצב', 'יימצא', 'יוצג', 'יוכן', 'יוחזק',
-    'בטיחות', 'תברואה', 'מבנה', 'ציוד', 'מטבח', 'משלוח',
-    'ישיבה', 'אש', 'גז', 'שטח', 'מידות', 'מקום'
-  ];
-  
-  return regulatoryKeywords.some(keyword => trimmed.includes(keyword));
+  // No hard validation - let categories.js handle all filtering logic
+  return true;
 }
 
 function containsHebrewText(text) {

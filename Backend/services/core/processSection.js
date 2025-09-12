@@ -12,14 +12,24 @@ export function processSection(section, index, categories) {
   // Skip document structure elements
   if (isDocumentStructure(section)) return;
   
+  // Track which sentences have been matched to avoid duplicates
+  const matchedSentences = new Set();
+  
   Object.keys(categories).forEach((category) => {
     const categoryData = categories[category];
     const foundKeywords = findKeywords(section, categoryData.keywords);
 
     if (foundKeywords.length > 0) {
-      const regulation = extractRegulation(section, foundKeywords, index, category);
+      const regulation = extractRegulation(section, foundKeywords, index, category, matchedSentences);
       if (regulation && !isDocumentStructure(regulation.text)) {
         categoryData.regulations.push(regulation);
+        // Mark sentences as matched to prevent them from being matched to other categories
+        regulation.text.split(/[.!?]/).forEach(sentence => {
+          const trimmed = sentence.trim();
+          if (trimmed.length > 15) {
+            matchedSentences.add(trimmed.toLowerCase());
+          }
+        });
       }
     }
   });
@@ -68,24 +78,11 @@ function isDocumentStructure(text) {
     return true;
   }
   
-  // Must contain regulatory language to be considered valid content
-  const regulatoryKeywords = [
-    'חובה', 'נדרש', 'יש ל', 'צריך', 'חייב', 'אסור', 'לא יעשה',
-    'מינימום', 'מקסימום', 'לפחות', 'לא יותר', 'לא פחות',
-    'יותקן', 'יוצב', 'יימצא', 'יוצג', 'יוכן', 'יוחזק',
-    'בטיחות', 'תברואה', 'מבנה', 'ציוד', 'מטבח', 'משלוח',
-    'ישיבה', 'אש', 'גז', 'שטח', 'מידות', 'מקום', 'מ"ר',
-    'איש', 'מקומות', 'תפוסה', 'קיבולת', 'גודל'
-  ];
-  
-  const hasRegulatoryLanguage = regulatoryKeywords.some(keyword => 
-    trimmed.toLowerCase().includes(keyword.toLowerCase())
-  );
-  
-  return !hasRegulatoryLanguage;
+  // No hard regulatory language validation - let categories.js handle filtering
+  return false;
 }
 
-function extractRegulation(text, keywords, sectionIndex, category) {
+function extractRegulation(text, keywords, sectionIndex, category, matchedSentences) {
   const sentences = text.split(/[.!?]/).filter((s) => s.trim().length > 15);
   const relevantSentences = [];
 
@@ -97,9 +94,14 @@ function extractRegulation(text, keywords, sectionIndex, category) {
       return;
     }
     
-    // Check if sentence contains keywords and regulatory language
+    // Skip if sentence already matched to another category
+    if (matchedSentences.has(trimmed.toLowerCase())) {
+      return;
+    }
+    
+    // Check if sentence contains keywords AND is relevant to this specific category
     if (keywords.some((keyword) => new RegExp(keyword, "gi").test(trimmed)) &&
-        containsRegulatoryLanguage(trimmed)) {
+        isRelevantToCategory(trimmed, category)) {
       relevantSentences.push(trimmed);
     }
   });
@@ -139,20 +141,47 @@ function isTableContent(text) {
   return tablePatterns.some(pattern => pattern.test(text));
 }
 
-function containsRegulatoryLanguage(text) {
-  const regulatoryKeywords = [
-    'חובה', 'נדרש', 'יש ל', 'צריך', 'חייב', 'אסור', 'לא יעשה',
-    'מינימום', 'מקסימום', 'לפחות', 'לא יותר', 'לא פחות',
-    'יותקן', 'יוצב', 'יימצא', 'יוצג', 'יוכן', 'יוחזק',
-    'בטיחות', 'תברואה', 'מבנה', 'מטבח', 'משלוח',
-    'ישיבה', 'אש', 'גז', 'שטח', 'מידות', 'מקום', 'מ"ר',
-    'איש', 'מקומות', 'תפוסה', 'קיבולת', 'גודל',
-    'הובלה', 'הגשה', 'מסירה', 'רכב', 'מזון מובל'
-  ];
+function isRelevantToCategory(sentence, category) {
+  const lowerSentence = sentence.toLowerCase();
   
-  return regulatoryKeywords.some(keyword => 
-    text.toLowerCase().includes(keyword.toLowerCase())
-  );
+  // Category-specific context validation to ensure sentences are actually relevant
+  switch (category) {
+    case 'deliveries':
+      // Must contain delivery-specific context
+      const deliveryContext = ['משלוח', 'הגשה', 'מסירה', 'הובלה', 'רכב', 'מזון מובל', 'שליחת', 'מכלים', 'טמפרטורה', 'בשר', 'דגים', 'עופות'];
+      return deliveryContext.some(context => lowerSentence.includes(context)) &&
+             (lowerSentence.includes('חייב') || lowerSentence.includes('נדרש') || lowerSentence.includes('צריך') || 
+              lowerSentence.includes('מינימום') || lowerSentence.includes('מקסימום') || lowerSentence.includes('יותקן'));
+             
+    case 'seating':
+      // Must contain seating-specific context with numbers or capacity
+      const seatingContext = ['ישיבה', 'כיסאות', 'מושבים', 'אורחים', 'קהל', 'תפוסה', 'קיבולת', 'אולם', 'מקומות'];
+      return seatingContext.some(context => lowerSentence.includes(context)) &&
+             (lowerSentence.includes('חייב') || lowerSentence.includes('נדרש') || lowerSentence.includes('צריך') ||
+              /\d+/.test(lowerSentence) || lowerSentence.includes('מינימום') || lowerSentence.includes('מקסימום'));
+             
+    case 'businessSize':
+      // Must contain size/area-specific context with measurements
+      const sizeContext = ['מ"ר', 'מטר', 'שטח', 'גודל', 'מידות', 'מטבח', 'מבנה', 'חלל', 'מרחב'];
+      return sizeContext.some(context => lowerSentence.includes(context)) &&
+             (lowerSentence.includes('חייב') || lowerSentence.includes('נדרש') || lowerSentence.includes('צריך') ||
+              /\d+/.test(lowerSentence) || lowerSentence.includes('מינימום') || lowerSentence.includes('מקסימום'));
+             
+    case 'fireAndGas':
+      // Must contain fire/gas safety-specific context
+      const fireGasContext = ['אש', 'כיבוי', 'גז', 'גפ"מ', 'בטיחות', 'מתזים', 'מטפה', 'ציוד', 'מערכת', 'ברז', 'זרנוק', 'עמדת', 'גלגלון'];
+      return fireGasContext.some(context => lowerSentence.includes(context)) &&
+             (lowerSentence.includes('חייב') || lowerSentence.includes('נדרש') || lowerSentence.includes('צריך') ||
+              lowerSentence.includes('יותקן') || lowerSentence.includes('יוצב') || lowerSentence.includes('יימצא'));
+             
+    default:
+      return true;
+  }
+}
+
+function containsRegulatoryLanguage(text) {
+  // Always return true - let categories.js handle all filtering logic
+  return true;
 }
 
 function isValidRegulationContent(text) {
@@ -162,8 +191,7 @@ function isValidRegulationContent(text) {
   // Must contain Hebrew text
   if (!/[\u0590-\u05FF]/.test(text)) return false;
   
-  // Must contain regulatory language
-  if (!containsRegulatoryLanguage(text)) return false;
+  // No hard regulatory language validation - let categories.js handle filtering
   
   // Must not be mostly table content
   const lines = text.split('\n');
