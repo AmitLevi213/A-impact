@@ -34,7 +34,7 @@ export function extractRequirements(regulation) {
   });
 
   // If we still don't have enough requirements, try to split by other patterns
-  if (requirements.length < 6) {
+  if (requirements.length < 2) {
     const additionalSentences = text.split(/[;,]|ו-|וגם/).filter((s) => s.trim().length > 8);
     additionalSentences.forEach((sentence) => {
       const cleanSentence = sentence.trim();

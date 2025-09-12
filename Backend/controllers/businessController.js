@@ -1,5 +1,6 @@
 import PDFProcessor from "../services/pdfProcessor.js";
 import Regulation from "../DB/models/businessSchema.js";
+import { generateBusinessReport } from "../services/llmService.js";
 import path from "path";
 
 export const getBusinessRequirements = async (req, res) => {
@@ -27,10 +28,15 @@ export const getBusinessRequirements = async (req, res) => {
     // Get filtered regulations from MongoDB based on business parameters
     const filteredRegulations = await processor.getFilteredRegulations(size, seating, gas, delivery);
 
+    // Generate comprehensive AI report (LLM disabled for cost savings)
+    const businessInfo = { size, seating, gas, delivery };
+    const aiReport = await generateBusinessReport(filteredRegulations, businessInfo);
+
     res.json({
       inputs: { size, seating, gas, delivery },
       totalFound: filteredRegulations.length,
       regulations: filteredRegulations,
+      aiReport,
       summary: processor.getSummary(filteredRegulations),
     });
   } catch (error) {

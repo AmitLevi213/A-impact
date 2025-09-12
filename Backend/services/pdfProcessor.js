@@ -173,7 +173,7 @@ class PDFProcessor {
         .filter(regulation => regulation.relevanceScore > 0)
         .sort((a, b) => b.relevanceScore - a.relevanceScore);
 
-      // Limit to top 6 regulations per category
+      // Limit to top 2 regulations per category
       const limitedRegulations = this.limitRegulationsByCategory(scoredRegulations);
 
       console.log(`Found ${scoredRegulations.length} relevant regulations, returning ${limitedRegulations.length} after limiting`);
@@ -277,7 +277,7 @@ class PDFProcessor {
     };
 
     return regulations.filter(regulation => {
-      if (categoryLimits[regulation.category] < 6) {
+      if (categoryLimits[regulation.category] < 2) {
         categoryLimits[regulation.category]++;
         return true;
       }
