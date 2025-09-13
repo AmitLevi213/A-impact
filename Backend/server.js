@@ -24,18 +24,7 @@ const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Strict rate limiting for business endpoint (AI token protection)
-const businessLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 3, // Limit each IP to 3 requests per minute
-  message: {
-    error: "יותר מדי בקשות לדוח עסקי, אנא המתן דקה לפני ניסיון נוסף",
-    retryAfter: "1 דקה"
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: false, // Count all requests, even successful ones
-});
+
 
 // Apply rate limiting
 app.use(generalLimiter);
