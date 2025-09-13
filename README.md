@@ -277,7 +277,7 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email support@a-impact.com or create an issue in this repository.
+For support, email amitandta@gmail.com or create an issue in this repository.
 
 ## 🔮 Roadmap
 
