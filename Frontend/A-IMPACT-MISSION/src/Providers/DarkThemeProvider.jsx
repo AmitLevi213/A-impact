@@ -1,7 +1,16 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 export const ThemeContext = createContext();
+
+// Custom hook to use theme context
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a DarkThemeProvider');
+  }
+  return context;
+};
 
 const themes = {
   light: {

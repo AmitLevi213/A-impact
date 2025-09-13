@@ -5,7 +5,11 @@ const connectDB = async () => {
   try {
     console.log(chalk.yellow.bold("🔄 Connecting to database..."));
 
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    // Use environment variable or fallback to local MongoDB
+    const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/a-impact";
+    console.log(chalk.cyan(`🔗 Connecting to: ${mongoURI}`));
+
+    const conn = await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

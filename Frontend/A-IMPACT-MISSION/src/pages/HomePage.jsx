@@ -20,8 +20,11 @@ export default function HomePage() {
     delivery,
     setDelivery,
     requirements,
+    aiReport,
     error,
     loading,
+    canSubmit,
+    getRemainingCooldown,
     handleSubmit,
     clearResults,
   } = useBusinessForm();
@@ -43,6 +46,8 @@ export default function HomePage() {
           delivery={delivery}
           setDelivery={setDelivery}
           loading={loading}
+          canSubmit={canSubmit}
+          getRemainingCooldown={getRemainingCooldown}
           onSubmit={handleSubmit}
         />
       </Suspense>
@@ -60,6 +65,7 @@ export default function HomePage() {
       <Suspense fallback={<LoadingFallback />}>
         <ResultsSection
           requirements={requirements}
+          aiReport={aiReport}
           onClearResults={clearResults}
         />
       </Suspense>

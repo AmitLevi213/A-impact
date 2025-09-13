@@ -12,6 +12,8 @@ export default function FormSection({
   delivery,
   setDelivery,
   loading,
+  canSubmit,
+  getRemainingCooldown,
   onSubmit,
 }) {
   return (
@@ -26,7 +28,11 @@ export default function FormSection({
         delivery={delivery}
         setDelivery={setDelivery}
       />
-      <SubmitButton loading={loading} />
+      <SubmitButton 
+        loading={loading} 
+        canSubmit={canSubmit}
+        remainingCooldown={getRemainingCooldown()}
+      />
     </form>
   );
 }

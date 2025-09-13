@@ -7,13 +7,28 @@ export function useBusinessForm() {
   const [gas, setGas] = useState(false);
   const [delivery, setDelivery] = useState(false);
   const [requirements, setRequirements] = useState([]);
+  const [aiReport, setAiReport] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [lastSubmissionTime, setLastSubmissionTime] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    
+    // Check cooldown period (30 seconds between submissions)
+    const now = Date.now();
+    const timeSinceLastSubmission = now - lastSubmissionTime;
+    const cooldownPeriod = 30000; // 30 seconds
+    
+    if (timeSinceLastSubmission < cooldownPeriod) {
+      const remainingTime = Math.ceil((cooldownPeriod - timeSinceLastSubmission) / 1000);
+      setError(`אנא המתן ${remainingTime} שניות לפני שליחה נוספת`);
+      return;
+    }
+    
     setLoading(true);
+    setLastSubmissionTime(now);
 
     // Validate form data
     const validation = validateFormData(size, seating);
@@ -30,6 +45,7 @@ export function useBusinessForm() {
         delivery,
       });
       setRequirements(res.regulations || []);
+      setAiReport(res.aiReport || "");
     } catch (err) {
       console.error("API error:", err);
       setError(err.message);
@@ -40,6 +56,24 @@ export function useBusinessForm() {
 
   const clearResults = () => {
     setRequirements([]);
+    setAiReport("");
+  };
+
+  // Calculate remaining cooldown time
+  const getRemainingCooldown = () => {
+    const now = Date.now();
+    const timeSinceLastSubmission = now - lastSubmissionTime;
+    const cooldownPeriod = 30000; // 30 seconds
+    
+    if (timeSinceLastSubmission < cooldownPeriod) {
+      return Math.ceil((cooldownPeriod - timeSinceLastSubmission) / 1000);
+    }
+    return 0;
+  };
+
+  // Check if form can be submitted
+  const canSubmit = () => {
+    return !loading && getRemainingCooldown() === 0;
   };
 
   return {
@@ -54,8 +88,13 @@ export function useBusinessForm() {
     setDelivery,
     // Results state
     requirements,
+    aiReport,
     error,
     loading,
+    // Rate limiting state
+    lastSubmissionTime,
+    getRemainingCooldown,
+    canSubmit,
     // Actions
     handleSubmit,
     clearResults,
