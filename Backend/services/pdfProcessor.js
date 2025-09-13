@@ -188,7 +188,7 @@ class PDFProcessor {
     const { size, seating, gas, delivery } = businessParams;
     let score = 0;
 
-    // Base score for category match
+    // Base score for category match - be more strict about relevance
     if (regulation.category === 'deliveries' && delivery === true) {
       score += 100;
     } else if (regulation.category === 'fireAndGas' && gas === true) {
@@ -198,7 +198,49 @@ class PDFProcessor {
     } else if (regulation.category === 'businessSize' && size > 0) {
       score += 100;
     } else {
-      return 0; // No match for this category
+      return 0; // No match for this category - be strict
+    }
+
+    // Additional relevance checks based on content analysis
+    const regulationContent = regulation.content.toLowerCase();
+    
+    // For seating regulations, check if they mention specific seating numbers
+    if (regulation.category === 'seating') {
+      const seatingMentioned = regulation.numbers.some(num => 
+        num.context === 'תפוסה' || num.context === 'ישיבה' || 
+        num.unit === 'איש' || num.unit === 'מקומות ישיבה'
+      );
+      if (!seatingMentioned && !regulationContent.includes('ישיבה') && !regulationContent.includes('תפוסה')) {
+        score -= 50; // Reduce score if not clearly about seating
+      }
+    }
+    
+    // For business size regulations, check if they mention area measurements
+    if (regulation.category === 'businessSize') {
+      const sizeMentioned = regulation.numbers.some(num => 
+        num.context === 'שטח' || num.unit === 'מ"ר' || num.unit === 'מטר'
+      );
+      if (!sizeMentioned && !regulationContent.includes('מ"ר') && !regulationContent.includes('שטח')) {
+        score -= 50; // Reduce score if not clearly about size
+      }
+    }
+    
+    // For delivery regulations, check if they mention delivery-specific terms
+    if (regulation.category === 'deliveries') {
+      const deliveryTerms = ['משלוח', 'הגשה', 'מסירה', 'הובלה', 'רכב', 'מזון מובל'];
+      const hasDeliveryTerms = deliveryTerms.some(term => regulationContent.includes(term));
+      if (!hasDeliveryTerms) {
+        score -= 50; // Reduce score if not clearly about delivery
+      }
+    }
+    
+    // For fire and gas regulations, check if they mention safety terms
+    if (regulation.category === 'fireAndGas') {
+      const safetyTerms = ['אש', 'כיבוי', 'גז', 'בטיחות', 'מתזים', 'מטפה'];
+      const hasSafetyTerms = safetyTerms.some(term => regulationContent.includes(term));
+      if (!hasSafetyTerms) {
+        score -= 50; // Reduce score if not clearly about fire/gas safety
+      }
     }
 
     // Size-based scoring for seating
@@ -217,10 +259,10 @@ class PDFProcessor {
       }
 
       // Check if regulation content mentions specific seating numbers
-      const content = regulation.content.toLowerCase();
-      if (content.includes(seating.toString()) || 
-          content.includes(`${seating} איש`) ||
-          content.includes(`${seating} מקומות`)) {
+      const seatingContent = regulation.content.toLowerCase();
+      if (seatingContent.includes(seating.toString()) || 
+          seatingContent.includes(`${seating} איש`) ||
+          seatingContent.includes(`${seating} מקומות`)) {
         score += 50; // Bonus for exact match
       }
     }
@@ -241,10 +283,10 @@ class PDFProcessor {
       }
 
       // Check if regulation content mentions specific size numbers
-      const content = regulation.content.toLowerCase();
-      if (content.includes(size.toString()) || 
-          content.includes(`${size} מ\"ר`) ||
-          content.includes(`${size} מטר`)) {
+      const sizeContent = regulation.content.toLowerCase();
+      if (sizeContent.includes(size.toString()) || 
+          sizeContent.includes(`${size} מ\"ר`) ||
+          sizeContent.includes(`${size} מטר`)) {
         score += 50; // Bonus for exact match
       }
     }
@@ -259,9 +301,9 @@ class PDFProcessor {
     }
 
     // Keyword density scoring
-    const content = regulation.content.toLowerCase();
+    const keywordContent = regulation.content.toLowerCase();
     const keywordCount = regulation.keywords.filter(keyword => 
-      content.includes(keyword.toLowerCase())
+      keywordContent.includes(keyword.toLowerCase())
     ).length;
     score += keywordCount * 5;
 
